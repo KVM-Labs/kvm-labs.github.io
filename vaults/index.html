@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVM Labs | Vault Library</title>
+    <style>
+        :root { --bg:#0a0a0c; --surface:#121216; --card:#1a1a22; --accent:#6200ee; --cyan:#00b0ff; --green:#00e676;
+                --text:#e1e1e6; --muted:#a0a0b2; --border:#262632; }
+        * { box-sizing: border-box; }
+        body { font-family:-apple-system,BlinkMacSystemFont,sans-serif; background:var(--bg); color:var(--text); margin:0; line-height:1.6; }
+        header { background:rgba(18,18,22,.9); border-bottom:1px solid var(--border); }
+        .nav { max-width:1100px; margin:0 auto; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+        .logo { font-size:1.25rem; font-weight:800; letter-spacing:1px; color:#fff; text-decoration:none; }
+        .logo span { color:var(--cyan); }
+        .nav a.back { color:var(--muted); text-decoration:none; font-size:.95rem; }
+        .nav a.back:hover { color:#fff; }
+        main { max-width:1100px; margin:0 auto; padding:40px 24px 60px; }
+        h1 { font-size:2rem; margin:0 0 8px; }
+        .lead { color:var(--muted); max-width:720px; margin:0 0 32px; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
+        .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:10px; }
+        .card.current { border-color:var(--green); box-shadow:0 0 0 1px rgba(0,230,118,.25); }
+        .tag { align-self:flex-start; font-size:.72rem; font-weight:700; letter-spacing:.8px; text-transform:uppercase; padding:3px 9px; border-radius:99px; background:var(--surface); color:var(--muted); border:1px solid var(--border); }
+        .current .tag { color:var(--green); border-color:var(--green); }
+        .card h2 { margin:0; font-size:1.15rem; }
+        .card p { margin:0; color:var(--muted); font-size:.95rem; flex:1; }
+        .btn { display:inline-block; text-align:center; text-decoration:none; font-weight:600; padding:10px 14px; border-radius:8px; background:var(--accent); color:#fff; }
+        .btn:hover { filter:brightness(1.15); }
+        .btn.alt { background:transparent; border:1px solid var(--border); color:var(--text); }
+        .links { display:flex; gap:10px; flex-wrap:wrap; }
+        footer { text-align:center; color:var(--muted); padding:24px; border-top:1px solid var(--border); font-size:.9rem; }
+        footer a { color:var(--cyan); }
+    </style>
+</head>
+<body>
+<header><div class="nav"><a class="logo" href="../">🌀 KVM <span>LABS</span></a><a class="back" href="../">← Back to home</a></div></header>
+<main>
+    <h1>Vault Library</h1>
+    <p class="lead">All KVM Labs vault pages in one place. Every page runs in your own browser, with no account and no server holding your data. <strong>Start with Vault 3</strong>. It is the newest and the one that matches the published paper.</p>
+    <div class="grid">
+        <article class="card current">
+            <span class="tag">Current · Start here</span>
+            <h2>Vault 3 — Kaleidoscope Glyph</h2>
+            <p>Save your AI notes and rules as one small encrypted picture, then restore them later as a short prompt. Has a Simple Mode for first-time users, works offline, and includes an optional private AI chat (beta).</p>
+            <div class="links">
+                <a class="btn" href="../vault-3/">Open Vault 3</a>
+                <a class="btn alt" href="https://github.com/KVM-Labs/Project-Kaleidoscope-KVMS-1.0">Source &amp; paper</a>
+            </div>
+        </article>
+        <article class="card">
+            <span class="tag">Earlier prototype</span>
+            <h2>Vault 1 — Privacy Cockpit</h2>
+            <p>The first cockpit: pick an AI engine, set a hardware encryption passkey, and manage a session from one screen.</p>
+            <div class="links"><a class="btn alt" href="../vault/">Open</a></div>
+        </article>
+        <article class="card">
+            <span class="tag">Earlier prototype</span>
+            <h2>Vault 2 — WebGPU Core Vault</h2>
+            <p>A local compute console that runs in browser hardware, with a visual cryptography storage matrix.</p>
+            <div class="links"><a class="btn alt" href="../vault2/">Open</a></div>
+        </article>
+        <article class="card">
+            <span class="tag">Earlier prototype</span>
+            <h2>Vault 4 — WebGPU Sandbox</h2>
+            <p>Local sandbox AI engine with live token output. No key required.</p>
+            <div class="links"><a class="btn alt" href="../vault-4/">Open</a></div>
+        </article>
+        <article class="card">
+            <span class="tag">Earlier prototype</span>
+            <h2>Vault 5 — WebGPU Sandbox</h2>
+            <p>A later version of the Vault 4 sandbox.</p>
+            <div class="links"><a class="btn alt" href="../vault-5/">Open</a></div>
+        </article>
+    </div>
+</main>
+<footer>KVM Labs &copy; 2026 · <a href="https://github.com/KVM-Labs">GitHub</a> · <a href="https://doi.org/10.5281/zenodo.24238012">Paper (DOI)</a></footer>
+</body>
+</html>
