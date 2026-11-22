@@ -7,6 +7,7 @@ Home page of KVM Labs, hosted with GitHub Pages at https://kvm-labs.github.io/
 | `/` | Home page |
 | `/vaults/` | Vault Library: links to every vault |
 | `/vault/` | Vault 3, the Kaleidoscope Glyph tool (current) |
+| `/vault/versions/` | Version history: every saved version of Vault 3, each one a working page |
 | `/vault-3/` | Redirects to `/vault/` (old link kept working) |
 | `/robots.txt`, `/sitemap.xml` | Tell search engines which pages to index (must stay in the root of this repository) |
 

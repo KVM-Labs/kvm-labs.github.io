@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /vault/versions/glyph-
 
 Sitemap: https://kvm-labs.github.io/sitemap.xml
