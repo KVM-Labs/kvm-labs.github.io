@@ -252,7 +252,7 @@
   .sugg{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin-top:8px}
   .sugg>span{flex:1;min-width:0;word-break:break-word;font-size:14px}
   #chatIn{min-height:64px;margin-bottom:6px}
-#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}</style>
+#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}</style>
 </head>
 <body>
 <main>
@@ -260,11 +260,11 @@
     <h1>Kaleidoscope <span>Glyph</span></h1>
     <div class="actions">
       <span class="pill warn" id="quickBadge" hidden>Quick re-save on</span>
-      <button class="ghost" id="loadBtn" type="button" title="Load an encrypted PNG Glyph picture file from your device">Load Glyph</button>
-      <button class="primary" id="saveOpenBtn" type="button" title="Encrypt your notes with a secret password and download a PNG Glyph picture file">Save Glyph</button>
+      <button class="ghost" id="loadBtn" type="button" title="Load an encrypted PNG Glyph picture file from your device" title="Load an encrypted PNG Glyph picture file from your device">Load Glyph</button>
+      <button class="primary" id="saveOpenBtn" type="button" title="Encrypt your notes with a secret password and download a PNG Glyph picture file" title="Encrypt your notes with a secret password and download a PNG Glyph picture file">Save Glyph</button>
       <button class="ghost" id="advBtn" type="button" aria-expanded="false" aria-controls="advPanel">&#9881; Advanced</button>
       <button class="ghost" id="clearSessionBtn" type="button">Clear Session</button>
-      <button class="ghost themebtn" id="themeBtn" type="button" title="Switch between dark night mode and light day mode" aria-label="Switch to day mode"><span id="themeLabel">&#9728; Day</span></button>
+      <button class="ghost themebtn" id="themeBtn" type="button" title="Switch between dark night mode and light day mode" title="Switch between dark night mode and light day mode" aria-label="Switch to day mode"><span id="themeLabel">&#9728; Day</span></button>
     </div>
     <span class="pill" id="privacyPill"><span class="dot" aria-hidden="true"></span><span id="privacyText"></span></span>
   </header>
@@ -277,17 +277,9 @@
     <h2>Paste what you want your AI to remember</h2>
     <p class="hint">Every line becomes its own note. Bullets and numbers are cleaned up for you.</p>
     <div class="console"><textarea id="consoleIn" rows="6" spellcheck="true" placeholder="Paste a chat summary, project notes, or instructions here..." aria-label="Paste what you want your AI to remember"></textarea></div>
-    <div class="hero-actions">
-      <button class="primary" id="addBtn" type="button">Add to memory</button>
-      <button class="ghost" id="loadBtn2" type="button">Load Glyph</button>
-      <button class="ghost" id="sampleBtn" type="button">Try Sample Project Glyph</button>
-    </div>
+    <div class="hero-actions"><button class="primary" id="addBtn" type="button" title="Save the notes you typed or pasted above into your current session">Add to memory</button><button class="ghost" id="wrapUpBtn" type="button" title="Copy instructions to paste into ChatGPT, Claude, or Gemini so it summarizes your chat into notes">Wrap up an AI chat</button><button class="ghost" id="loadBtn2" type="button" title="Open an existing encrypted PNG Glyph picture file from your device">Load Glyph</button><button class="ghost" id="sampleBtn" type="button" title="Load a built-in example Glyph to test how Kaleidoscope works">Try Sample Project Glyph</button></div>
     <p class="hint" id="consoleHint">Press Enter to add. Shift+Enter makes a new line.</p>
-    <ol class="steps" id="empty">
-      <li><b>Paste</b> your notes above.</li>
-      <li><b>Save Glyph.</b> Pick a passkey. You get a picture file.</li>
-      <li><b>Load Glyph</b> (drop the file on this page) and <b>Copy prompt</b> to use it with any AI.</li>
-    </ol>
+    <ol class="steps" id="empty"><li><b>Paste</b> your notes above (or click <b>Wrap up an AI chat</b> to copy summary instructions first).</li><li><b>Save Glyph.</b> Pick a secret password. You get an encrypted PNG picture file.</li><li><b>Load Glyph</b> (drop the file on this page) and <button type="button" class="inline-link-btn" id="stepCopyBtn" title="Copy your memory prompt (or AI summary instructions if no notes are added yet)">Copy prompt</button> to use it with any AI.</li></ol><p class="hint" style="margin-top:10px"><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p>
   </section>
 
   <!-- Ready to copy: the only thing most people need after pasting -->
@@ -296,9 +288,8 @@
       <h2>Ready for your AI</h2>
       <p class="hint">Auto-Tune sends the most important notes first and keeps the prompt short.</p>
       <p class="simple-stat" id="simpleStat" aria-live="polite"></p>
-      <div class="tools"><button class="primary" id="copyBtn" type="button" title="Copy your assembled memory prompt to paste at the start of any AI chat">Copy prompt</button><span id="copyMsg" class="msg ok" style="margin:0;align-self:center"></span></div>
-      <p class="tip">Paste it at the start of a chat with any AI. When you paste into a cloud AI, that company can read it.</p>
-      <div class="tools" style="margin-top:14px"><button class="ghost" id="advBtn2" type="button" aria-expanded="false" aria-controls="advPanel"><span id="advBtn2Label">&#9881; Advanced Controls (Musical Key, Token Limit &amp; Rule Editor)</span></button></div>
+      <div class="tools"><button class="primary" id="copyBtn" type="button" title="Copy your assembled memory prompt to paste at the start of any AI chat" title="Copy your assembled memory prompt to paste at the start of any AI chat">Copy prompt</button><span id="copyMsg" class="msg ok" style="margin:0;align-self:center"></span></div>
+      <p class="tip"><b>Next:</b> Open ChatGPT, Claude, or Gemini in another tab and paste (<code>Ctrl+V</code> / <code>Cmd+V</code>) at the start of your chat. Your notes stay 100% locked on your device until you choose to paste them into a cloud AI, which will read whatever you paste.</p><div class="tools" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px"><button class="ghost" id="advBtn2" type="button" aria-expanded="false" aria-controls="advPanel" title="Show or hide Musical Key filters, Token Limit slider, and Rule Editor"><span id="advBtn2Label">&#9881; Advanced Controls (Musical Key, Token Limit &amp; Rule Editor)</span></button><button class="ghost" id="clearSessionBtn" type="button" title="Wipe all notes and unlocked passwords from this browser tab">Clear Session</button></div>
     </section>
   </div>
 
@@ -310,8 +301,8 @@
       <div class="keys" id="keys"></div>
       <div class="keybar">
         <label>Musical key <select id="keyPreset"></select></label>
-        <button class="ghost" id="allBtn" type="button" title="Include all active notes in your prompt">All notes</button>
-        <button class="ghost" id="noneBtn" type="button" title="Temporarily exclude all notes from your prompt">None</button>
+        <button class="ghost" id="allBtn" type="button" title="Include all active notes in your prompt" title="Include all active notes in your prompt">All notes</button>
+        <button class="ghost" id="noneBtn" type="button" title="Temporarily exclude all notes from your prompt" title="Temporarily exclude all notes from your prompt">None</button>
         <span class="spacer"></span>
         <label><input type="checkbox" id="limitOn"> Limit size</label>
         <input type="range" id="budgetRange" min="0" max="1000" step="10" value="300" aria-label="Token budget slider">
@@ -336,7 +327,7 @@
 
   <!-- Private AI chat: an AI that runs inside this browser (WebGPU) -->
   <section class="card" id="aiCard" aria-labelledby="aiHead" hidden>
-    <h2 id="aiHead">Chat with a private AI <span class="badge">beta</span></h2><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p>
+    <h2 id="aiHead">Chat with a private AI <span class="badge">beta</span></h2><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p>
     <p class="hint">A small AI that runs inside this browser and uses your notes as its instructions. Your notes and messages stay on this device.</p>
     <p class="msg" id="aiGpuMsg" aria-live="polite"></p>
     <div id="aiSetup">
@@ -369,8 +360,8 @@
 
   <footer>
     <ul>
-      <li>Forget the passkey and the glyph cannot be opened. There is no reset.</li>
-      <li>The locked data lives in the PNG file's data, not in its pixels. If a website or app compresses, re-saves or shrinks the image, the data is lost. Send glyphs as file attachments and keep a backup.</li>
+      <li>Forget the secret password and the glyph cannot be opened. There is no reset.</li>
+      <li>The locked data lives in the PNG file's data, not in its pixels. If a website or app compresses, re-saves or shrinks the image, the data is lost. Send glyphs as file attachments (in WhatsApp/Telegram/Slack tap Attach &rarr; Document/File) and keep a backup.</li>
       <li>The title is locked inside the glyph. The picture only shows the format, the save time and a short ID.</li>
       <li>Locking and unlocking take a few seconds on purpose. That slowness protects your passkey.</li>
     </ul>
@@ -394,18 +385,10 @@
         </select></div>
       <div class="fname" id="fnamePreview" aria-label="File name preview"></div>
       <div id="passFields">
-        <div class="field"><label for="savePw">Passkey</label><input type="password" id="savePw" autocomplete="new-password"></div>
-        <div class="field"><label for="savePw2">Type it again</label><input type="password" id="savePw2" autocomplete="new-password"></div>
-        <div class="strength" aria-live="polite"><span id="strengthText">Passkey strength</span><span class="bar"><div id="strengthBar"></div></span></div>
-        <div class="rowbtns"><button class="ghost" id="suggestBtn" type="button">Suggest 4 words</button></div>
-        <p class="tip" id="suggestTip" hidden></p>
-        <label class="check"><input type="checkbox" id="keepPass"> Keep this passkey for quick re-save until I press Clear Session (or 15 minutes of inactivity)</label>
-      </div>
-      <div class="cap"><span id="capText"></span><div class="meter" id="capMeter"><div></div></div></div>
-      <p class="warnnote">A forgotten passkey cannot be recovered. Share the PNG as a file or attachment: apps that compress images erase the locked data.</p>
+        <div class="field"><label for="savePw">Secret password <span style="font-weight:400;opacity:.8">(create any password to lock your notes into this picture)</span></label><input type="password" id="savePw" autocomplete="new-password"></div><p class="warnnote" style="margin-top:4px"><b>Warning:</b> If you forget this password, your saved notes are gone for good—there is no reset.</p><div class="field"><label for="savePw2">Confirm password</label><input type="password" id="savePw2" autocomplete="new-password"></div><div class="strength" aria-live="polite"><span id="strengthText">Password strength</span><span class="bar"><div id="strengthBar"></div></span></div><div class="rowbtns"><button class="ghost" id="suggestBtn" type="button" title="Generate a strong 4-word secret password">Suggest 4 words</button></div><label class="check" title="Quick re-save lets you re-save updated notes without re-typing your password during this session"><input type="checkbox" id="keepPass"> Keep this password for Quick re-save (re-save changes without re-typing your password during this session)</label>
       <div class="rowbtns">
-        <button class="primary" id="quickBtn" type="button" title="Re-save your updated Glyph immediately using your remembered session password" hidden>Quick Re-Save</button>
-        <button class="primary" id="saveBtn" type="button" title="Encrypt your notes and download the PNG Glyph picture file">Lock and save glyph</button>
+        <button class="primary" id="quickBtn" type="button" title="Re-save your updated Glyph immediately using your remembered session password" title="Re-save your updated Glyph immediately using your remembered session password" hidden>Quick Re-Save</button>
+        <button class="primary" id="saveBtn" type="button" title="Encrypt your notes and download the PNG Glyph picture file" title="Encrypt your notes and download the PNG Glyph picture file">Lock and save glyph</button>
         <button class="ghost" id="saveCancel" type="button" hidden>Cancel</button>
       </div>
       <div class="progress" id="saveProg"><div></div></div>
@@ -415,7 +398,7 @@
       <img class="preview" id="preview" alt="Your new glyph" hidden>
       <div class="gid" id="gid"></div>
       <div class="rowbtns"><a class="dl" id="dlLink" hidden>Download again</a><button class="ghost" id="copyLockedBtn" type="button">Copy locked text</button><span id="copyLockedMsg" class="msg ok" style="margin:0"></span></div>
-      <p class="hint" style="margin-top:12px">Some apps (WhatsApp, iMessage, screenshots) strip the hidden data from pictures. As a backup, copy the locked text and keep it somewhere safe. It is just as private as the picture: it cannot be opened without your passkey.</p>
+      <p class="hint" style="margin-top:12px"><b>How to share safely:</b> Send the PNG file as an attachment/document, not as a regular photo in chat apps (which compress images and erase your notes). <b>Tip:</b> In WhatsApp, Telegram, or Slack, tap <b>Attach &rarr; Document/File</b> (not Photo/Gallery) so the image is not compressed.</p>
 
       <div class="rowbtns" style="margin-top:12px"><button class="primary" id="saveDone" type="button">Done</button></div>
     </div>
@@ -432,10 +415,9 @@
     <details id="pasteBox" style="margin:10px 0"><summary>Paste locked text instead</summary>
       <textarea id="pasteIn" rows="4" spellcheck="false" placeholder="Paste the locked text (from ---BEGIN KALEIDOSCOPE GLYPH--- to ---END KALEIDOSCOPE GLYPH---)" aria-label="Locked text" style="margin-top:8px"></textarea>
     </details>
-    <div class="field"><label for="openPw">Passkey</label><input type="password" id="openPw" autocomplete="current-password"></div>
-    <label class="check"><input type="checkbox" id="keepPass2"> Keep unlocked for quick re-save until I press Clear Session (or 15 minutes of inactivity)</label>
+    <div class="field"><label for="openPw">Secret password</label><input type="password" id="openPw" autocomplete="current-password"></div><label class="check" title="Quick re-save lets you re-save updated notes without re-typing your password during this session"><input type="checkbox" id="keepPass2"> Keep unlocked for Quick re-save (re-save changes without re-typing your password during this session)</label>
     <div class="rowbtns">
-      <button class="primary" id="openBtn" type="button" title="Decrypt and load the notes hidden inside this Glyph">Unlock glyph</button>
+      <button class="primary" id="openBtn" type="button" title="Decrypt and load the notes hidden inside this Glyph" title="Decrypt and load the notes hidden inside this Glyph">Unlock glyph</button>
       <button class="ghost" id="openCancel" type="button" hidden>Cancel</button>
     </div>
     <div class="progress" id="openProg"><div></div></div>
