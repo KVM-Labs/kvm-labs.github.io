@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-JAtTOg+hMtH9JY5IQF/VycDosMYynsicaY5PJ+ilLPA=' 'sha256-Ee4jI6p7/ZhCHzus57JVQGU45QVatziC8xidqAyPdus=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-JAtTOg+hMtH9JY5IQF/VycDosMYynsicaY5PJ+ilLPA=' 'sha256-si3wmhPqDV2KdyWMKfXWoHOO8JqdNvHTMknaUPT3h+8=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
 <title>Kaleidoscope Glyph: private AI memory saver by KVM Labs</title>
 <meta name="description" content="Free, offline tool from KVM Labs that locks your AI chat notes into an encrypted picture (a Memory Glyph). Nothing is uploaded. Open it later to resume.">
 <meta name="robots" content="index, follow">
@@ -1475,17 +1475,17 @@ function planArt(fp, size) {
   }
 
   function wireToolbar() {
-    $("#advBtn").addEventListener("click", () => setAdvanced(!document.body.classList.contains("adv")));
-    $("#advBtn2").addEventListener("click", () => setAdvanced(!document.body.classList.contains("adv")));
-    $("#allBtn").addEventListener("click", () => { state.active = new Set(NOTES); state.keyChoice = "all"; refresh(); });
-    $("#noneBtn").addEventListener("click", () => { state.active = new Set(); state.keyChoice = "custom"; refresh(); });
-    $("#limitOn").addEventListener("change", e => { state.limit = e.target.checked; refresh(); });
-    $("#budgetRange").addEventListener("input", e => { state.budget = Number(e.target.value); refresh(); });
-    $("#budgetNum").addEventListener("input", e => { state.budget = Number(e.target.value) || 0; refresh(); });
+    $("#advBtn")?.addEventListener("click", () => setAdvanced(!document.body.classList.contains("adv")));
+    $("#advBtn2")?.addEventListener("click", () => setAdvanced(!document.body.classList.contains("adv")));
+    $("#allBtn")?.addEventListener("click", () => { state.active = new Set(NOTES); state.keyChoice = "all"; refresh(); });
+    $("#noneBtn")?.addEventListener("click", () => { state.active = new Set(); state.keyChoice = "custom"; refresh(); });
+    $("#limitOn")?.addEventListener("change", e => { state.limit = e.target.checked; refresh(); });
+    $("#budgetRange")?.addEventListener("input", e => { state.budget = Number(e.target.value); refresh(); });
+    $("#budgetNum")?.addEventListener("input", e => { state.budget = Number(e.target.value) || 0; refresh(); });
 
     wireConsole();
     wireTheme();
-    $("#sampleBtn").addEventListener("click", () => {
+    $("#sampleBtn")?.addEventListener("click", () => {
       state.started = true;
       state.title = EXAMPLE.title;
       loadNodes(EXAMPLE.nodes, EXAMPLE.labels);
@@ -1493,7 +1493,7 @@ function planArt(fp, size) {
       setStatus("Sample project loaded. Edit anything, then press Save Glyph to lock it into a picture.", "ok");
     });
 
-    $("#copyBtn").addEventListener("click", async () => {
+    $("#copyBtn")?.addEventListener("click", async () => {
       const ok = await copyToClipboard($("#prompt").value);
       const msg = $("#copyMsg");
       msg.textContent = ok ? "Copied" : "Open Advanced and press Ctrl+C";
@@ -1838,34 +1838,34 @@ function planArt(fp, size) {
   }
 
   function wireDialogs() {
-    $("#saveOpenBtn").addEventListener("click", openSave);
-    $("#loadBtn").addEventListener("click", () => openLoad(null));
-    $("#loadBtn2").addEventListener("click", () => openLoad(null));
-    $("#saveBtn").addEventListener("click", () => doSave(false));
-    $("#quickBtn").addEventListener("click", () => doSave(true));
-    $("#openBtn").addEventListener("click", doOpen);
-    $("#copyLockedBtn").addEventListener("click", async () => {
+    $("#saveOpenBtn")?.addEventListener("click", openSave);
+    $("#loadBtn")?.addEventListener("click", () => openLoad(null));
+    $("#loadBtn2")?.addEventListener("click", () => openLoad(null));
+    $("#saveBtn")?.addEventListener("click", () => doSave(false));
+    $("#quickBtn")?.addEventListener("click", () => doSave(true));
+    $("#openBtn")?.addEventListener("click", doOpen);
+    $("#copyLockedBtn")?.addEventListener("click", async () => {
       if (!lockedText) return;
       $("#copyLockedMsg").textContent = (await copyToClipboard(lockedText)) ? "Copied!" : "Could not copy. Press Download again and keep the picture.";
     });
-    $("#openPw").addEventListener("keydown", e => { if (e.key === "Enter") doOpen(); });
-    $("#savePw2").addEventListener("keydown", e => { if (e.key === "Enter") doSave(false); });
-    $("#saveCancel").addEventListener("click", () => { if (saveCancel) saveCancel.cancelled = true; });
-    $("#openCancel").addEventListener("click", () => { if (openCancel) openCancel.cancelled = true; });
-    $("#saveX").addEventListener("click", () => $("#saveDlg").close());
-    $("#saveDone").addEventListener("click", () => $("#saveDlg").close());
-    $("#loadX").addEventListener("click", () => $("#loadDlg").close());
+    $("#openPw")?.addEventListener("keydown", e => { if (e.key === "Enter") doOpen(); });
+    $("#savePw2")?.addEventListener("keydown", e => { if (e.key === "Enter") doSave(false); });
+    $("#saveCancel")?.addEventListener("click", () => { if (saveCancel) saveCancel.cancelled = true; });
+    $("#openCancel")?.addEventListener("click", () => { if (openCancel) openCancel.cancelled = true; });
+    $("#saveX")?.addEventListener("click", () => $("#saveDlg").close());
+    $("#saveDone")?.addEventListener("click", () => $("#saveDlg").close());
+    $("#loadX")?.addEventListener("click", () => $("#loadDlg").close());
     // closing a window stops any lock or unlock still running in it, and empties its secret password boxes
-    $("#saveDlg").addEventListener("close", () => { if (saveCancel) saveCancel.cancelled = true; for (const id of ["#savePw", "#savePw2"]) $(id).value = ""; });
-    $("#loadDlg").addEventListener("close", () => { if (openCancel) openCancel.cancelled = true; $("#openPw").value = ""; $("#pasteIn").value = ""; });
-    $("#clearSessionBtn").addEventListener("click", () => {
+    $("#saveDlg")?.addEventListener("close", () => { if (saveCancel) saveCancel.cancelled = true; for (const id of ["#savePw", "#savePw2"]) $(id).value = ""; });
+    $("#loadDlg")?.addEventListener("close", () => { if (openCancel) openCancel.cancelled = true; $("#openPw").value = ""; $("#pasteIn").value = ""; });
+    $("#clearSessionBtn")?.addEventListener("click", () => {
       if (hasContent() && snapshot() !== savedSnapshot &&
           !confirm("Clear this session? Notes, labels, title, secret passwords and previews are removed from this page. Saved glyph files are not touched.")) return;
       clearSession();
     });
-    $("#saveTitle").addEventListener("input", e => { state.title = e.target.value; scheduleCapacity(); });
-    $("#savePw").addEventListener("input", updateStrength);
-    $("#suggestBtn").addEventListener("click", () => {
+    $("#saveTitle")?.addEventListener("input", e => { state.title = e.target.value; scheduleCapacity(); });
+    $("#savePw")?.addEventListener("input", updateStrength);
+    $("#suggestBtn")?.addEventListener("click", () => {
       const phrase = suggestPassphrase(4);
       const tip = $("#suggestTip");
       tip.textContent = "";
@@ -1875,7 +1875,7 @@ function planArt(fp, size) {
       $("#savePw").value = phrase; $("#savePw2").value = phrase;
       updateStrength();
     });
-    $("#fileIn").addEventListener("change", e => chooseFile(e.target.files[0]));
+    $("#fileIn")?.addEventListener("change", e => chooseFile(e.target.files[0]));
     document.addEventListener("pointerdown", () => { lastActive = Date.now(); }, true);
     document.addEventListener("keydown", () => { lastActive = Date.now(); }, true);
     setInterval(() => { if (sessionPass && Date.now() - lastActive > IDLE_MS) forgetPass(); }, 30000);
@@ -2240,16 +2240,16 @@ function planArt(fp, size) {
     const sel = $("#aiModel");
     AI_MODELS.forEach((m, i) => sel.append(h("option", {value: String(i)}, m.name)));
     sel.addEventListener("change", () => { ai.sizeFor = ""; $("#aiSizeTip").textContent = "Check the size first. The download happens once; next time the AI loads from this browser's storage."; aiRender(); });
-    $("#aiSizeBtn").addEventListener("click", aiCheckSize);
-    $("#aiStartBtn").addEventListener("click", aiStart);
-    $("#aiCancelBtn").addEventListener("click", aiCancelDownload);
-    $("#aiDeleteBtn").addEventListener("click", aiDeleteModel);
-    $("#aiUnloadBtn").addEventListener("click", () => { chatNew(); aiUnload(); });
-    $("#chatSend").addEventListener("click", chatSend);
-    $("#chatStop").addEventListener("click", chatStop);
-    $("#chatNew").addEventListener("click", chatNew);
-    $("#chatSuggest").addEventListener("click", chatSuggest);
-    $("#chatIn").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); chatSend(); } });
+    $("#aiSizeBtn")?.addEventListener("click", aiCheckSize);
+    $("#aiStartBtn")?.addEventListener("click", aiStart);
+    $("#aiCancelBtn")?.addEventListener("click", aiCancelDownload);
+    $("#aiDeleteBtn")?.addEventListener("click", aiDeleteModel);
+    $("#aiUnloadBtn")?.addEventListener("click", () => { chatNew(); aiUnload(); });
+    $("#chatSend")?.addEventListener("click", chatSend);
+    $("#chatStop")?.addEventListener("click", chatStop);
+    $("#chatNew")?.addEventListener("click", chatNew);
+    $("#chatSuggest")?.addEventListener("click", chatSuggest);
+    $("#chatIn")?.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); chatSend(); } });
     aiRender();
     aiGpuCheck().then(aiRender);
   }
