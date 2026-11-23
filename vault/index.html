@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-z9w20728XlQmyT8FO1z/Ny53V0Rd6EswZXd/p3lcpIs=' 'sha256-187DbEFc8mf0jFMd6QEvmNMQKruIuXSECfFwbOuLBFU=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-z9w20728XlQmyT8FO1z/Ny53V0Rd6EswZXd/p3lcpIs=' 'sha256-u1VBdbLGZkrOM3zLUEJaMy+G+8dejEGdphLe9yrd5LQ=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
 <title>Kaleidoscope Glyph: private AI memory saver by KVM Labs</title>
 <meta name="description" content="Free, offline tool from KVM Labs that locks your AI chat notes into an encrypted picture (a Memory Glyph). Nothing is uploaded. Open it later to resume.">
 <meta name="robots" content="index, follow">
@@ -1370,7 +1370,7 @@ function planArt(fp, size) {
     if (run !== capRun) return;
     const pct = Math.min(100, Math.round(100 * bytes / MAX_PAYLOAD));
     const over = bytes > MAX_PAYLOAD || bytes - HEADER_V2_LEN - 16 > BUCKETS[BUCKETS.length - 1];
-    $("#capText").textContent = "Glyph size: " + bytes.toLocaleString() + " of " + MAX_PAYLOAD.toLocaleString() +
+    if($("#capText"))$("#capText").textContent= "Glyph size: " + bytes.toLocaleString() + " of " + MAX_PAYLOAD.toLocaleString() +
       " bytes (" + (bytes && pct === 0 ? "<1" : pct) + "%)" + (over ? " - too big, trim some notes" : " - padded so the size hides how much you wrote");
     const meter = $("#capMeter");
     meter.classList.toggle("over", over);
@@ -1378,11 +1378,11 @@ function planArt(fp, size) {
   }
   function updateFilenamePreview() {
     const t = stampParts({});
-    $("#fnamePreview").textContent = "File name: KVMS_" + t.date + "_" + t.hh + t.mm + "_XXXXXXXX.png";
+    if($("#fnamePreview"))$("#fnamePreview").textContent= "File name: KVMS_" + t.date + "_" + t.hh + t.mm + "_XXXXXXXX.png";
   }
   function updateStrength() {
     const r = secretPasswordStrength($("#savePw").value);
-    $("#strengthText").textContent = r.bits ? "Secret password strength: " + r.label : "Secret password strength";
+    if($("#strengthText"))$("#strengthText").textContent= r.bits ? "Secret password strength: " + r.label : "Secret password strength";
     const bar = $("#strengthBar");
     bar.style.width = Math.round(100 * r.fraction) + "%";
     bar.style.background = r.label === "Weak" ? "var(--bad)" : r.label === "Fair" ? "var(--warn)" : "var(--good)";
@@ -1454,7 +1454,7 @@ function planArt(fp, size) {
   const THEME_KEY = "kg-theme";
   function systemTheme() { return window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; }
   function showTheme(t) {
-    $("#themeLabel").textContent = t === "light" ? "\u{1F319} Night" : "\u2600 Day";
+    if($("#themeLabel"))$("#themeLabel").textContent= t === "light" ? "\u{1F319} Night" : "\u2600 Day";
     $("#themeBtn").setAttribute("aria-label", t === "light" ? "Switch to night mode" : "Switch to day mode");
   }
   function wireTheme() {
@@ -1706,12 +1706,12 @@ function planArt(fp, size) {
       const png = new Uint8Array(await pngBlob.arrayBuffer());
       const finalPng = pngInjectText(png, PNG_FIELD, b64encode(payload));
       lockedText = lockedTextFor(payload, id);
-      $("#copyLockedMsg").textContent = "";
+      if($("#copyLockedMsg"))$("#copyLockedMsg").textContent= "";
       const blob = new Blob([finalPng], {type: "image/png"});
       const name = glyphFilename(session, id);
 
       showSavedPreview(blob);
-      $("#gid").textContent = "";
+      if($("#gid"))$("#gid").textContent= "";
       $("#gid").append("Saved as ", h("b", {}, name), ". Glyph ID: ", h("b", {}, id), ".");
       if (downloadUrl) URL.revokeObjectURL(downloadUrl);
       downloadUrl = URL.createObjectURL(blob);
@@ -1753,7 +1753,7 @@ function planArt(fp, size) {
 
   function chooseFile(file) {
     openFile = file || null;
-    $("#dropText").textContent = file ? file.name : "Drop a glyph PNG here, or click to choose";
+    if($("#dropText"))$("#dropText").textContent= file ? file.name : "Drop a glyph PNG here, or click to choose";
     setMsg("#openMsg", "");
     const img = $("#loadPreview");
     if (loadPreviewUrl) { URL.revokeObjectURL(loadPreviewUrl); loadPreviewUrl = null; }
@@ -1823,7 +1823,7 @@ function planArt(fp, size) {
     state.limit = true; state.budget = AUTO_BUDGET;
     loadNodes([], {});
     for (const id of ["#saveTitle", "#savePw", "#savePw2", "#openPw", "#pasteIn"]) $(id).value = "";
-    lockedText = null; $("#copyLockedMsg").textContent = "";
+    lockedText = null; if($("#copyLockedMsg"))$("#copyLockedMsg").textContent= "";
     $("#suggestTip").hidden = true;
     setMsg("#saveMsg", ""); setMsg("#openMsg", ""); setStatus("");
     chooseFile(null);
@@ -1832,7 +1832,7 @@ function planArt(fp, size) {
     if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
     if (downloadUrl) { URL.revokeObjectURL(downloadUrl); downloadUrl = null; }
     const link = $("#dlLink"); link.hidden = true; link.removeAttribute("href");
-    $("#gid").textContent = "";
+    if($("#gid"))$("#gid").textContent= "";
     updateFilenamePreview(); updateStrength(); refresh();
     markSaved();
   }
@@ -1846,7 +1846,7 @@ function planArt(fp, size) {
     $("#openBtn")?.addEventListener("click", doOpen);
     $("#copyLockedBtn")?.addEventListener("click", async () => {
       if (!lockedText) return;
-      $("#copyLockedMsg").textContent = (await copyToClipboard(lockedText)) ? "Copied!" : "Could not copy. Press Download again and keep the picture.";
+      if($("#copyLockedMsg"))$("#copyLockedMsg").textContent= (await copyToClipboard(lockedText)) ? "Copied!" : "Could not copy. Press Download again and keep the picture.";
     });
     $("#openPw")?.addEventListener("keydown", e => { if (e.key === "Enter") doOpen(); });
     $("#savePw2")?.addEventListener("keydown", e => { if (e.key === "Enter") doSave(false); });
@@ -1955,7 +1955,7 @@ function planArt(fp, size) {
 
   function aiRender() {
     const ok = ai.gpu && ai.gpu.ok;
-    $("#aiGpuMsg").textContent = ai.gpu ? (ok ? "" : ai.gpu.why) : "Checking whether this browser can run the AI...";
+    if($("#aiGpuMsg"))$("#aiGpuMsg").textContent= ai.gpu ? (ok ? "" : ai.gpu.why) : "Checking whether this browser can run the AI...";
     $("#aiGpuMsg").className = "msg" + (ai.gpu && !ok ? " err" : "");
     $("#aiSetup").hidden = !ok || ai.phase === "ready";
     $("#aiChat").hidden = !(ok && ai.phase === "ready");
@@ -2079,9 +2079,9 @@ function planArt(fp, size) {
     ai.gen = null; ai.busy = false;
     if (ai.loadToken) aiCancelDownload();
     ai.msgs = [];
-    $("#chatLog").textContent = "";
+    if($("#chatLog"))$("#chatLog").textContent= "";
     $("#chatIn").value = "";
-    $("#suggestBox").textContent = ""; $("#suggestBox").hidden = true;
+    if($("#suggestBox"))$("#suggestBox").textContent= ""; $("#suggestBox").hidden = true;
     setChatMsg(""); setAiMsg("");
     aiUnload();
   }
@@ -2153,8 +2153,8 @@ function planArt(fp, size) {
   function chatNew() {
     if (ai.busy) return;
     ai.msgs = [];
-    $("#chatLog").textContent = "";
-    $("#suggestBox").textContent = ""; $("#suggestBox").hidden = true;
+    if($("#chatLog"))$("#chatLog").textContent= "";
+    if($("#suggestBox"))$("#suggestBox").textContent= ""; $("#suggestBox").hidden = true;
     setChatMsg("");
     try { ai.engine && ai.engine.resetChat && Promise.resolve(ai.engine.resetChat()).catch(() => {}); } catch (e) { /* ignore */ }
   }
@@ -2228,7 +2228,7 @@ function planArt(fp, size) {
       if (!ai.mod) ai.mod = await import(AI_LIB_URL);
       await ai.mod.deleteModelAllInfoInCache(id);
       ai.sizeFor = "";
-      $("#aiSizeTip").textContent = "Check the size first. The download happens once; next time the AI loads from this browser's storage.";
+      if($("#aiSizeTip"))$("#aiSizeTip").textContent= "Check the size first. The download happens once; next time the AI loads from this browser's storage.";
       setAiMsg("Removed. Starting it again will download it again.", "ok");
     } catch (e) {
       setAiMsg("Could not remove it: " + (e && e.message ? e.message : "unknown error") + ". You can also clear this page's site data in the browser settings.", "err");
@@ -2239,7 +2239,7 @@ function planArt(fp, size) {
   function wireAi() {
     const sel = $("#aiModel");
     AI_MODELS.forEach((m, i) => sel.append(h("option", {value: String(i)}, m.name)));
-    sel.addEventListener("change", () => { ai.sizeFor = ""; $("#aiSizeTip").textContent = "Check the size first. The download happens once; next time the AI loads from this browser's storage."; aiRender(); });
+    sel.addEventListener("change", () => { ai.sizeFor = ""; if($("#aiSizeTip"))$("#aiSizeTip").textContent= "Check the size first. The download happens once; next time the AI loads from this browser's storage."; aiRender(); });
     $("#aiSizeBtn")?.addEventListener("click", aiCheckSize);
     $("#aiStartBtn")?.addEventListener("click", aiStart);
     $("#aiCancelBtn")?.addEventListener("click", aiCancelDownload);
