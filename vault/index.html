@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-JAtTOg+hMtH9JY5IQF/VycDosMYynsicaY5PJ+ilLPA=' 'sha256-si3wmhPqDV2KdyWMKfXWoHOO8JqdNvHTMknaUPT3h+8=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-JAtTOg+hMtH9JY5IQF/VycDosMYynsicaY5PJ+ilLPA=' 'sha256-td0s1Foky9MnUDbtIt+dmtOguayA0o1GGqrlwQ2zLrk=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
 <title>Kaleidoscope Glyph: private AI memory saver by KVM Labs</title>
 <meta name="description" content="Free, offline tool from KVM Labs that locks your AI chat notes into an encrypted picture (a Memory Glyph). Nothing is uploaded. Open it later to resume.">
 <meta name="robots" content="index, follow">
@@ -276,7 +276,7 @@
     <h2>Paste what you want your AI to remember</h2>
     <p class="hint">Every line becomes its own note. Bullets and numbers are cleaned up for you.</p>
     <div class="console"><textarea id="consoleIn" rows="6" spellcheck="true" placeholder="Paste a chat summary, project notes, or instructions here..." aria-label="Paste what you want your AI to remember"></textarea></div>
-    <div class='hero-actions'><button class='primary' id='addBtn' type='button' title='Save the notes you typed or pasted above into your current session'>Add to memory</button><button class='ghost' id='wrapUpBtn' type='button' title='Copy instructions to paste into ChatGPT, Claude, or Gemini so it summarizes your chat into notes'>Wrap up an AI chat</button><button class='ghost' id='loadBtn2' type='button' title='Open an existing encrypted PNG Glyph picture file from your device'>Load Glyph</button><button class='ghost' id='sampleBtn' type='button' title='Load a built-in example Glyph to test how Kaleidoscope works'>Try Sample Project Glyph</button></div>
+    <div class='hero-actions'><button class='primary' id='addBtn' type='button' title='Save the notes you typed or pasted above into your current session'>Add to memory</button><button class='ghost' id='wrapUpBtn' type='button' title='Copy instructions to paste into ChatGPT, Claude, or Gemini so it summarizes your chat into notes'>Wrap up an AI chat</button><button class='ghost' id='loadBtn2' type='button' title='Open an existing encrypted PNG Glyph picture file from your device'>Load Glyph</button><button class='ghost' id='sampleBtn' type='button' title='Load a built-in example Glyph to test how Kaleidoscope works'>Try ⚙ Advanced Project Glyph</button></div>
     <p class="hint" id="consoleHint">Press Enter to add. Shift+Enter makes a new line.</p>
     <ol class='steps' id='empty'><li><b>Paste</b> your notes above (or click <b>Wrap up an AI chat</b> to copy summary instructions first).</li><li><b>Save Glyph.</b> Pick a secret password. You get an encrypted PNG picture file.</li><li><b>Load Glyph</b> (drop the file on this page) and <button type='button' class='inline-link-btn' id='stepCopyBtn' title='Copy your memory prompt (or AI summary instructions if no notes are added yet)'>Copy prompt</button> to use it with any AI.</li></ol><p class='hint' style='margin-top:10px'><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p><p class="hint" style="margin-top:10px"><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p>
   </section>
@@ -1493,7 +1493,8 @@ function planArt(fp, size) {
       setStatus("Sample project loaded. Edit anything, then press Save Glyph to lock it into a picture.", "ok");
     });
 
-    $("#copyBtn")?.addEventListener("click", async () => {
+    ["#copyBtn","#stepCopyBtn"].forEach(sel=>$(sel)?.addEventListener("click",()=>{const b=$(sel);if(!b)return;const orig=b.textContent;b.textContent="✓ Copied!";clearTimeout(b._ct);b._ct=setTimeout(()=>{b.textContent=orig;},2000);}));
+  $("#copyBtn")?.addEventListener("click", async () => {
       const ok = await copyToClipboard($("#prompt").value);
       const msg = $("#copyMsg");
       msg.textContent = ok ? "Copied" : "Open Advanced and press Ctrl+C";
