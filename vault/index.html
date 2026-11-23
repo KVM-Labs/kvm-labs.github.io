@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-z9w20728XlQmyT8FO1z/Ny53V0Rd6EswZXd/p3lcpIs=' 'sha256-oz1bnx9q99QuUUjCt5f6skr1ttCeEicQhvcupTBaVfg=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-z9w20728XlQmyT8FO1z/Ny53V0Rd6EswZXd/p3lcpIs=' 'sha256-+tIIR4wNdEk3IgVaQbzbaqJapLxUAu2ho1CvTj2/9h8=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
 <title>Kaleidoscope Glyph: private AI memory saver by KVM Labs</title>
 <meta name="description" content="Free, offline tool from KVM Labs that locks your AI chat notes into an encrypted picture (a Memory Glyph). Nothing is uploaded. Open it later to resume.">
 <meta name="robots" content="index, follow">
@@ -1439,7 +1439,7 @@ function planArt(fp, size) {
     box.addEventListener("keydown", e => {
       if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(); }
     });
-    box.addEventListener("paste", e => {
+    box.addEventListener("__disabled_paste", e => {
       const text = (e.clipboardData && e.clipboardData.getData("text")) || "";
       if (!/\r?\n/.test(text.trim())) return;          // a single line pastes normally
       e.preventDefault();
