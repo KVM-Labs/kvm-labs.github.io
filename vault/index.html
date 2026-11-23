@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-JAtTOg+hMtH9JY5IQF/VycDosMYynsicaY5PJ+ilLPA=' 'sha256-BJ6KbM9sHBTmIWr/7M9ToxM5qokOkTy/CujQSYVumPw=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-z9w20728XlQmyT8FO1z/Ny53V0Rd6EswZXd/p3lcpIs=' 'sha256-8d0qd91vFShMJ4Q8VkSiyDFNyH7sxq74cmeV5zvP60c=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
 <title>Kaleidoscope Glyph: private AI memory saver by KVM Labs</title>
 <meta name="description" content="Free, offline tool from KVM Labs that locks your AI chat notes into an encrypted picture (a Memory Glyph). Nothing is uploaded. Open it later to resume.">
 <meta name="robots" content="index, follow">
@@ -261,7 +261,7 @@
     <div class="actions">
       <span class="pill warn" id="quickBadge" hidden>Quick re-save on</span>
       <button class="ghost" id='loadBtn' type='button' title='Load an encrypted PNG Glyph picture file from your device'>Load Glyph</button>
-      <button class="primary" id='saveOpenBtn' type='button' title='Encrypt your notes with a secret password and download a PNG Glyph picture file'>Save Glyph</button>
+      <button class="ghost" id="sampleBtn" title="Load a pre-built multi-note project glyph to explore musical keys and rules">Try ⚙ Advanced Project Glyph</button>
       
       <button class="ghost themebtn" id='themeBtn' type='button' title='Switch between dark night mode and light day mode' aria-label="Switch to day mode"><span id="themeLabel">&#9728; Day</span></button>
     </div>
@@ -276,9 +276,9 @@
     <h2>Paste what you want your AI to remember</h2>
     <p class="hint">Every line becomes its own note. Bullets and numbers are cleaned up for you.</p>
     <div class="console"><textarea id="consoleIn" rows="6" spellcheck="true" placeholder="Paste a chat summary, project notes, or instructions here..." aria-label="Paste what you want your AI to remember"></textarea></div>
-    <div class='hero-actions'><button class='primary' id='addBtn' type='button' title='Save the notes you typed or pasted above into your current session'>Add to memory</button><button class='ghost' id='wrapUpBtn' type='button' title='Copy instructions to paste into ChatGPT, Claude, or Gemini so it summarizes your chat into notes'>Wrap up an AI chat</button><button class='ghost' id='loadBtn2' type='button' title='Open an existing encrypted PNG Glyph picture file from your device'>Load Glyph</button><button class='ghost' id='sampleBtn' type='button' title='Load a built-in example Glyph to test how Kaleidoscope works'>Try ⚙ Advanced Project Glyph</button></div>
+    <div class='hero-actions'><button class="primary" id="saveOpenBtn" disabled title="Type notes above or load a glyph first">Save Glyph</button><button class='ghost' id='wrapUpBtn' type='button' title='Copy instructions to paste into ChatGPT, Claude, or Gemini so it summarizes your chat into notes'>Wrap up an AI chat</button><button class='ghost' id='loadBtn2' type='button' title='Open an existing encrypted PNG Glyph picture file from your device'>Load Glyph</button></div>
     <p class="hint" id="consoleHint">Press Enter to add. Shift+Enter makes a new line.</p>
-    <ol class='steps' id='empty'><li><b>Paste</b> your notes above (or click <b>Wrap up an AI chat</b> to copy summary instructions first).</li><li><b>Save Glyph.</b> Pick a secret password. You get an encrypted PNG picture file.</li><li><b>Load Glyph</b> (drop the file on this page) and <button type='button' class='inline-link-btn' id='stepCopyBtn' title='Copy your memory prompt (or AI summary instructions if no notes are added yet)'>Copy prompt</button> to use it with any AI.</li></ol><p class='hint' style='margin-top:10px'><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p><p class="hint" style="margin-top:10px"><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p>
+    <ol class='steps' id='empty'><li><b>Paste</b> your notes above (or click <b>Wrap up an AI chat</b> to copy summary instructions first).</li><li><b>Save Glyph.</b> Pick a secret password. You get an encrypted PNG picture file.</li><li><b>Load Glyph</b> (drop the file on this page) and <button type='button' class='inline-link-btn' id='stepCopyBtn' title='Copy your memory prompt (or AI summary instructions if no notes are added yet)' style="background:#0284c7;color:#ffffff;border:0;border-radius:6px;padding:3px 10px;font-weight:700;font-size:.9em;cursor:pointer;vertical-align:baseline">Copy prompt</button> to use it with any AI.</li></ol><p class="hint" style="margin-top:10px"><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p>
   </section>
 
   <!-- Ready to copy: the only thing most people need after pasting -->
@@ -326,7 +326,7 @@
 
   <!-- Private AI chat: an AI that runs inside this browser (WebGPU) -->
   <section class="card" id="aiCard" aria-labelledby="aiHead" hidden>
-    <h2 id='aiHead'>Chat with a private AI <span class='badge'>beta</span></h2><p class='hint' style='margin-top:-4px'><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p>
+    <h2 id='aiHead'>Chat with a private AI <span class='badge'>beta</span></h2><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p>
     <p class="hint">A small AI that runs inside this browser and uses your notes as its instructions. Your notes and messages stay on this device.</p>
     <p class="msg" id="aiGpuMsg" aria-live="polite"></p>
     <div id="aiSetup">
@@ -1054,7 +1054,6 @@ function planArt(fp, size) {
 
 (function(){const sp="Please summarize everything important from our conversation so far into concise, one-line bullet points (facts, decisions, preferences, and next steps) so I can paste them into my Kaleidoscope Glyph memory saver.";async function cp(el){try{await navigator.clipboard.writeText(sp);}catch(e){const ta=document.createElement("textarea");ta.value=sp;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}if(el)el.textContent="Copied AI summary instructions! Paste into ChatGPT, Claude, or Gemini, then paste its summary back here.";const st=document.getElementById("status");if(st){st.hidden=false;st.textContent="Copied AI summary instructions! Paste into your AI chat, then paste its reply back above.";}}const wb=document.getElementById("wrapUpBtn");if(wb)wb.addEventListener("click",()=>cp(document.getElementById("consoleHint")));const sc=document.getElementById("stepCopyBtn");if(sc)sc.addEventListener("click",()=>{const cb=document.getElementById("copyBtn"),ws=document.getElementById("workspace");if(ws&&!ws.hidden&&cb)cb.click();else cp(document.getElementById("consoleHint"));});const so=document.getElementById("saveOpenBtn"),wo=document.getElementById("workspace");function sy(){if(so&&wo)so.classList.toggle("muted-save",wo.hidden);}if(wo){new MutationObserver(sy).observe(wo,{attributes:true,attributeFilter:["hidden"]});sy();}})();
 
-(function(){const sp='Please summarize everything important from our conversation so far into concise, one-line bullet points (facts, decisions, preferences, and next steps) so I can paste them into my Kaleidoscope Glyph memory saver.';async function cp(el){try{await navigator.clipboard.writeText(sp);}catch(e){const ta=document.createElement('textarea');ta.value=sp;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}if(el)el.textContent='Copied AI summary instructions! Paste into ChatGPT, Claude, or Gemini, then paste its summary back here.';const st=document.getElementById('status');if(st){st.hidden=false;st.textContent='Copied AI summary instructions! Paste into your AI chat, then paste its reply back above.';}}const wb=document.getElementById('wrapUpBtn');if(wb)wb.addEventListener('click',()=>cp(document.getElementById('consoleHint')));const sc=document.getElementById('stepCopyBtn');if(sc)sc.addEventListener('click',()=>{const cb=document.getElementById('copyBtn'),ws=document.getElementById('workspace');if(ws&&!ws.hidden&&cb)cb.click();else cp(document.getElementById('consoleHint'));});const so=document.getElementById('saveOpenBtn'),wo=document.getElementById('workspace');function sy(){if(so&&wo)so.classList.toggle('muted-save',wo.hidden);}if(wo){new MutationObserver(sy).observe(wo,{attributes:true,attributeFilter:['hidden']});sy();}})();
 </script>
 
 <script id="ui">
@@ -1839,8 +1838,8 @@ function planArt(fp, size) {
   }
 
   function wireDialogs() {
-    $("#bulk")?.addEventListener("input",()=>{const b=$("#saveOpenBtn");if(b)b.disabled=!(state.notes.length>0||$("#bulk").value.trim().length>0);});
-  $("#saveOpenBtn")?.addEventListener("click", openSave);
+    if(typeof box!=="undefined"&&box){box.addEventListener("input",()=>{const b=$("#saveOpenBtn");if(b)b.disabled=!(state.notes.length>0||box.value.trim().length>0);});}
+  $("#saveOpenBtn")?.addEventListener("click",()=>{if(typeof box!=="undefined"&&box&&box.value.trim()){submit();}openSave();});
     $("#loadBtn")?.addEventListener("click", () => openLoad(null));
     $("#loadBtn2")?.addEventListener("click", () => openLoad(null));
     $("#saveBtn")?.addEventListener("click", () => doSave(false));
