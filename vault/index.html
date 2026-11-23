@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-z9w20728XlQmyT8FO1z/Ny53V0Rd6EswZXd/p3lcpIs=' 'sha256-wVJSuIREOCzHBY+HR1TsCjS6nMub+oDgwAzy0oSVrM8=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-z9w20728XlQmyT8FO1z/Ny53V0Rd6EswZXd/p3lcpIs=' 'sha256-187DbEFc8mf0jFMd6QEvmNMQKruIuXSECfFwbOuLBFU=' 'wasm-unsafe-eval' https://cdn.jsdelivr.net/npm/; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
 <title>Kaleidoscope Glyph: private AI memory saver by KVM Labs</title>
 <meta name="description" content="Free, offline tool from KVM Labs that locks your AI chat notes into an encrypted picture (a Memory Glyph). Nothing is uploaded. Open it later to resume.">
 <meta name="robots" content="index, follow">
@@ -1838,7 +1838,7 @@ function planArt(fp, size) {
   }
 
   function wireDialogs() {
-    const ta=document.querySelector("textarea"),up=()=>{const b=$("#saveOpenBtn");if(b)b.disabled=!(state.notes.length>0||(ta&&ta.value.trim().length>0));};ta?.addEventListener("input",up);up();$("#saveOpenBtn")?.addEventListener("click",()=>{if(ta&&ta.value.trim())$("#addBtn")?.click();openSave();});
+    const ta=document.querySelector("textarea"),up=()=>{const b=$("#saveOpenBtn");if(b)b.disabled=!((state.notes||[]).length>0||(ta&&ta.value.trim().length>0));};ta?.addEventListener("input",up);up();$("#saveOpenBtn")?.addEventListener("click",()=>{if(ta&&ta.value.trim())$("#addBtn")?.click();openSave();});
     $("#loadBtn")?.addEventListener("click", () => openLoad(null));
     $("#loadBtn2")?.addEventListener("click", () => openLoad(null));
     $("#saveBtn")?.addEventListener("click", () => doSave(false));
