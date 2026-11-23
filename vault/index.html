@@ -19,7 +19,7 @@
   One file. Works offline. Nothing is uploaded anywhere.
 
   It makes and opens the SAME glyph files as glyph.py:
-    - passkey -> key:    scrypt, settings stored in the file (default N=32768, r=8, p=3), 32-byte key
+    - secret password -> key:    scrypt, settings stored in the file (default N=32768, r=8, p=3), 32-byte key
     - lock:              AES-256-GCM, 12-byte nonce; the whole header is the extra authenticated data
     - packing:           zlib-compressed JSON (the title is inside, so it only shows after unlocking)
     - file layout:       "KGLYPH2" + N(4) + r(1) + p(1) + salt(16) + nonce(12) + locked data
@@ -32,7 +32,7 @@
   The page's Content-Security-Policy (meta tag above) allows its own two scripts (by hash). The only
   network connections it permits are for the optional on-device AI chat (Step 3B), and only after you press
   a button: the AI software from cdn.jsdelivr.net/npm/ (one pinned version) and the AI model files from
-  Hugging Face and GitHub. Your notes, messages and passkey are never sent. Without that chat the page
+  Hugging Face and GitHub. Your notes, messages and secret password are never sent. Without that chat the page
   makes no network requests. If you edit the scripts, run update_csp.py to refresh the hashes.
   The picture is drawn from a fingerprint of the locked data. Pictures made here
   look different from pictures made by glyph.py, but the hidden data is
@@ -252,7 +252,7 @@
   .sugg{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin-top:8px}
   .sugg>span{flex:1;min-width:0;word-break:break-word;font-size:14px}
   #chatIn{min-height:64px;margin-bottom:6px}
-#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}</style>
+#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}#privacyPill{opacity:.68;font-size:12px;border-color:rgba(128,128,128,.22)!important;background:transparent!important}#privacyPill .dot{opacity:.55}.inline-link-btn{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0}.inline-link-btn:hover{opacity:.85}.muted-save{opacity:.58}</style>
 </head>
 <body>
 <main>
@@ -260,11 +260,10 @@
     <h1>Kaleidoscope <span>Glyph</span></h1>
     <div class="actions">
       <span class="pill warn" id="quickBadge" hidden>Quick re-save on</span>
-      <button class="ghost" id="loadBtn" type="button" title="Load an encrypted PNG Glyph picture file from your device" title="Load an encrypted PNG Glyph picture file from your device">Load Glyph</button>
-      <button class="primary" id="saveOpenBtn" type="button" title="Encrypt your notes with a secret password and download a PNG Glyph picture file" title="Encrypt your notes with a secret password and download a PNG Glyph picture file">Save Glyph</button>
-      <button class="ghost" id="advBtn" type="button" aria-expanded="false" aria-controls="advPanel">&#9881; Advanced</button>
-      <button class="ghost" id="clearSessionBtn" type="button">Clear Session</button>
-      <button class="ghost themebtn" id="themeBtn" type="button" title="Switch between dark night mode and light day mode" title="Switch between dark night mode and light day mode" aria-label="Switch to day mode"><span id="themeLabel">&#9728; Day</span></button>
+      <button class="ghost" id='loadBtn' type='button' title='Load an encrypted PNG Glyph picture file from your device' title="Load an encrypted PNG Glyph picture file from your device" title="Load an encrypted PNG Glyph picture file from your device">Load Glyph</button>
+      <button class="primary" id='saveOpenBtn' type='button' title='Encrypt your notes with a secret password and download a PNG Glyph picture file' title="Encrypt your notes with a secret password and download a PNG Glyph picture file" title="Encrypt your notes with a secret password and download a PNG Glyph picture file">Save Glyph</button>
+      
+      <button class="ghost themebtn" id='themeBtn' type='button' title='Switch between dark night mode and light day mode' title="Switch between dark night mode and light day mode" title="Switch between dark night mode and light day mode" aria-label="Switch to day mode"><span id="themeLabel">&#9728; Day</span></button>
     </div>
     <span class="pill" id="privacyPill"><span class="dot" aria-hidden="true"></span><span id="privacyText"></span></span>
   </header>
@@ -277,9 +276,9 @@
     <h2>Paste what you want your AI to remember</h2>
     <p class="hint">Every line becomes its own note. Bullets and numbers are cleaned up for you.</p>
     <div class="console"><textarea id="consoleIn" rows="6" spellcheck="true" placeholder="Paste a chat summary, project notes, or instructions here..." aria-label="Paste what you want your AI to remember"></textarea></div>
-    <div class="hero-actions"><button class="primary" id="addBtn" type="button" title="Save the notes you typed or pasted above into your current session">Add to memory</button><button class="ghost" id="wrapUpBtn" type="button" title="Copy instructions to paste into ChatGPT, Claude, or Gemini so it summarizes your chat into notes">Wrap up an AI chat</button><button class="ghost" id="loadBtn2" type="button" title="Open an existing encrypted PNG Glyph picture file from your device">Load Glyph</button><button class="ghost" id="sampleBtn" type="button" title="Load a built-in example Glyph to test how Kaleidoscope works">Try Sample Project Glyph</button></div>
+    <div class='hero-actions'><button class='primary' id='addBtn' type='button' title='Save the notes you typed or pasted above into your current session'>Add to memory</button><button class='ghost' id='wrapUpBtn' type='button' title='Copy instructions to paste into ChatGPT, Claude, or Gemini so it summarizes your chat into notes'>Wrap up an AI chat</button><button class='ghost' id='loadBtn2' type='button' title='Open an existing encrypted PNG Glyph picture file from your device'>Load Glyph</button><button class='ghost' id='sampleBtn' type='button' title='Load a built-in example Glyph to test how Kaleidoscope works'>Try Sample Project Glyph</button></div>
     <p class="hint" id="consoleHint">Press Enter to add. Shift+Enter makes a new line.</p>
-    <ol class="steps" id="empty"><li><b>Paste</b> your notes above (or click <b>Wrap up an AI chat</b> to copy summary instructions first).</li><li><b>Save Glyph.</b> Pick a secret password. You get an encrypted PNG picture file.</li><li><b>Load Glyph</b> (drop the file on this page) and <button type="button" class="inline-link-btn" id="stepCopyBtn" title="Copy your memory prompt (or AI summary instructions if no notes are added yet)">Copy prompt</button> to use it with any AI.</li></ol><p class="hint" style="margin-top:10px"><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p>
+    <ol class='steps' id='empty'><li><b>Paste</b> your notes above (or click <b>Wrap up an AI chat</b> to copy summary instructions first).</li><li><b>Save Glyph.</b> Pick a secret password. You get an encrypted PNG picture file.</li><li><b>Load Glyph</b> (drop the file on this page) and <button type='button' class='inline-link-btn' id='stepCopyBtn' title='Copy your memory prompt (or AI summary instructions if no notes are added yet)'>Copy prompt</button> to use it with any AI.</li></ol><p class='hint' style='margin-top:10px'><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p><p class="hint" style="margin-top:10px"><b>How it works:</b> Your notes are encrypted with your secret password and hidden inside a regular PNG picture file—double-clicking it on your computer just shows art, so drop it back onto this page to unlock your notes.</p>
   </section>
 
   <!-- Ready to copy: the only thing most people need after pasting -->
@@ -288,7 +287,7 @@
       <h2>Ready for your AI</h2>
       <p class="hint">Auto-Tune sends the most important notes first and keeps the prompt short.</p>
       <p class="simple-stat" id="simpleStat" aria-live="polite"></p>
-      <div class="tools"><button class="primary" id="copyBtn" type="button" title="Copy your assembled memory prompt to paste at the start of any AI chat" title="Copy your assembled memory prompt to paste at the start of any AI chat">Copy prompt</button><span id="copyMsg" class="msg ok" style="margin:0;align-self:center"></span></div>
+      <div class="tools"><button class="primary" id='copyBtn' type='button' title='Copy your assembled memory prompt to paste at the start of any AI chat' title="Copy your assembled memory prompt to paste at the start of any AI chat" title="Copy your assembled memory prompt to paste at the start of any AI chat">Copy prompt</button><span id="copyMsg" class="msg ok" style="margin:0;align-self:center"></span></div>
       <p class="tip"><b>Next:</b> Open ChatGPT, Claude, or Gemini in another tab and paste (<code>Ctrl+V</code> / <code>Cmd+V</code>) at the start of your chat. Your notes stay 100% locked on your device until you choose to paste them into a cloud AI, which will read whatever you paste.</p><div class="tools" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px"><button class="ghost" id="advBtn2" type="button" aria-expanded="false" aria-controls="advPanel" title="Show or hide Musical Key filters, Token Limit slider, and Rule Editor"><span id="advBtn2Label">&#9881; Advanced Controls (Musical Key, Token Limit &amp; Rule Editor)</span></button><button class="ghost" id="clearSessionBtn" type="button" title="Wipe all notes and unlocked passwords from this browser tab">Clear Session</button></div>
     </section>
   </div>
@@ -301,8 +300,8 @@
       <div class="keys" id="keys"></div>
       <div class="keybar">
         <label>Musical key <select id="keyPreset"></select></label>
-        <button class="ghost" id="allBtn" type="button" title="Include all active notes in your prompt" title="Include all active notes in your prompt">All notes</button>
-        <button class="ghost" id="noneBtn" type="button" title="Temporarily exclude all notes from your prompt" title="Temporarily exclude all notes from your prompt">None</button>
+        <button class="ghost" id='allBtn' type='button' title='Include all active notes in your prompt' title="Include all active notes in your prompt" title="Include all active notes in your prompt">All notes</button>
+        <button class="ghost" id='noneBtn' type='button' title='Temporarily exclude all notes from your prompt' title="Temporarily exclude all notes from your prompt" title="Temporarily exclude all notes from your prompt">None</button>
         <span class="spacer"></span>
         <label><input type="checkbox" id="limitOn"> Limit size</label>
         <input type="range" id="budgetRange" min="0" max="1000" step="10" value="300" aria-label="Token budget slider">
@@ -327,7 +326,7 @@
 
   <!-- Private AI chat: an AI that runs inside this browser (WebGPU) -->
   <section class="card" id="aiCard" aria-labelledby="aiHead" hidden>
-    <h2 id="aiHead">Chat with a private AI <span class="badge">beta</span></h2><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p>
+    <h2 id='aiHead'>Chat with a private AI <span class='badge'>beta</span></h2><p class='hint' style='margin-top:-4px'><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p><p class="hint" style="margin-top:-4px"><b>(Optional)</b> You do not need to download an AI model to save, load, or copy your notes.</p>
     <p class="hint">A small AI that runs inside this browser and uses your notes as its instructions. Your notes and messages stay on this device.</p>
     <p class="msg" id="aiGpuMsg" aria-live="polite"></p>
     <div id="aiSetup">
@@ -363,9 +362,9 @@
       <li>Forget the secret password and the glyph cannot be opened. There is no reset.</li>
       <li>The locked data lives in the PNG file's data, not in its pixels. If a website or app compresses, re-saves or shrinks the image, the data is lost. Send glyphs as file attachments (in WhatsApp/Telegram/Slack tap Attach &rarr; Document/File) and keep a backup.</li>
       <li>The title is locked inside the glyph. The picture only shows the format, the save time and a short ID.</li>
-      <li>Locking and unlocking take a few seconds on purpose. That slowness protects your passkey.</li>
+      <li>Locking and unlocking take a few seconds on purpose. That slowness protects your secret password.</li>
     </ul>
-    <p class="legal">Kaleidoscope Glyph &middot; &copy; KVM Labs &middot; Released under the MIT License. Provided &ldquo;AS IS&rdquo;, without warranty of any kind. Use at your own risk, and keep backups: a lost passkey cannot be recovered.</p>
+    <p class="legal">Kaleidoscope Glyph &middot; &copy; KVM Labs &middot; Released under the MIT License. Provided &ldquo;AS IS&rdquo;, without warranty of any kind. Use at your own risk, and keep backups: a lost secret password cannot be recovered.</p>
   </footer>
 </main>
 
@@ -387,8 +386,8 @@
       <div id="passFields">
         <div class="field"><label for="savePw">Secret password <span style="font-weight:400;opacity:.8">(create any password to lock your notes into this picture)</span></label><input type="password" id="savePw" autocomplete="new-password"></div><p class="warnnote" style="margin-top:4px"><b>Warning:</b> If you forget this password, your saved notes are gone for good—there is no reset.</p><div class="field"><label for="savePw2">Confirm password</label><input type="password" id="savePw2" autocomplete="new-password"></div><div class="strength" aria-live="polite"><span id="strengthText">Password strength</span><span class="bar"><div id="strengthBar"></div></span></div><div class="rowbtns"><button class="ghost" id="suggestBtn" type="button" title="Generate a strong 4-word secret password">Suggest 4 words</button></div><label class="check" title="Quick re-save lets you re-save updated notes without re-typing your password during this session"><input type="checkbox" id="keepPass"> Keep this password for Quick re-save (re-save changes without re-typing your password during this session)</label>
       <div class="rowbtns">
-        <button class="primary" id="quickBtn" type="button" title="Re-save your updated Glyph immediately using your remembered session password" title="Re-save your updated Glyph immediately using your remembered session password" hidden>Quick Re-Save</button>
-        <button class="primary" id="saveBtn" type="button" title="Encrypt your notes and download the PNG Glyph picture file" title="Encrypt your notes and download the PNG Glyph picture file">Lock and save glyph</button>
+        <button class="primary" id='quickBtn' type='button' title='Re-save your updated Glyph immediately using your remembered session password' title="Re-save your updated Glyph immediately using your remembered session password" title="Re-save your updated Glyph immediately using your remembered session password" hidden>Quick Re-Save</button>
+        <button class="primary" id='saveBtn' type='button' title='Encrypt your notes and download the PNG Glyph picture file' title="Encrypt your notes and download the PNG Glyph picture file" title="Encrypt your notes and download the PNG Glyph picture file">Lock and save glyph</button>
         <button class="ghost" id="saveCancel" type="button" hidden>Cancel</button>
       </div>
       <div class="progress" id="saveProg"><div></div></div>
@@ -417,7 +416,7 @@
     </details>
     <div class="field"><label for="openPw">Secret password</label><input type="password" id="openPw" autocomplete="current-password"></div><label class="check" title="Quick re-save lets you re-save updated notes without re-typing your password during this session"><input type="checkbox" id="keepPass2"> Keep unlocked for Quick re-save (re-save changes without re-typing your password during this session)</label>
     <div class="rowbtns">
-      <button class="primary" id="openBtn" type="button" title="Decrypt and load the notes hidden inside this Glyph" title="Decrypt and load the notes hidden inside this Glyph">Unlock glyph</button>
+      <button class="primary" id='openBtn' type='button' title='Decrypt and load the notes hidden inside this Glyph' title="Decrypt and load the notes hidden inside this Glyph" title="Decrypt and load the notes hidden inside this Glyph">Unlock glyph</button>
       <button class="ghost" id="openCancel" type="button" hidden>Cancel</button>
     </div>
     <div class="progress" id="openProg"><div></div></div>
@@ -447,7 +446,7 @@ const V1_PARAMS = {N: 32768, r: 8, p: 1};
 const MIN_N = 16384, MAX_N = 131072, MAX_R = 8, MAX_P = 8;   // safety limits, same as glyph.py
 const HEADER_V2_LEN = MAGIC.length + 4 + 1 + 1 + SALT_LEN + NONCE_LEN;   // 41 bytes
 const NO_DATA_MSG = "No hidden glyph data found. This image was probably compressed, resized or re-saved by an app or website. Use the original glyph file, or paste the locked text if you copied it when you saved.";
-const WRONG_KEY_MSG = "Wrong passkey, or the glyph file was modified.";
+const WRONG_KEY_MSG = "Wrong secret password, or the glyph file was modified.";
 const NOT_GLYPH_MSG = "This does not look like a Kaleidoscope glyph.";
 const UNSAFE_MSG = "This glyph asks for lock settings outside the safe limits, so it was not opened.";
 const CANCELLED_MSG = "Cancelled.";
@@ -698,7 +697,7 @@ function unpadPacked(plain) {                     // early KGLYPH2 files had no 
   return plain.subarray(4, 4 + n);
 }
 /* Best-effort memory hygiene: overwrite a buffer with zeros once it is no longer needed.
-   (JavaScript cannot promise that no other copy exists, e.g. the typed passkey text.) */
+   (JavaScript cannot promise that no other copy exists, e.g. the typed secret password text.) */
 function wipe(...buffers) { for (const b of buffers) if (b && b.fill) b.fill(0); }
 
 function checkParams(P) {
@@ -869,7 +868,7 @@ function glyphFilename(session, id) {       // KVMS_YYYY-MM-DD_HHMM_XXXXXXXX.png
   return "KVMS_" + t.date + "_" + t.hh + t.mm + "_" + id + ".png";
 }
 
-/* ---------- passkey help (all local, nothing leaves the page) ---------- */
+/* ---------- secret password help (all local, nothing leaves the page) ---------- */
 
 const WORDS = "able acid acorn actor adapt admit adult agent agree ahead alarm album alert alive allow alloy alpha amber ample angle ankle apple april apron arch arena argue armor arrow aspen atlas atom attic audio autumn avoid awake award axis bacon badge bagel baker balance bamboo banjo barn basil basket beach beacon beam bean beaver bench berry bike bison blade blanket blast blend bless blink bloom blue blush boat bobcat bold bolt bonus book boost border bottle bounce bowl brain brake branch brave bread breeze brick bridge bright brook broom brush bubble bucket buddy buffalo bugle bundle burst butter button cabin cable cactus cake calm camel camera camp canal candle candy canoe canvas canyon cape captain carbon cargo carpet carrot carry cart castle cat cave cedar celery cello cement chain chair chalk champ chart cheese cherry chess chief child chill chime chip choir chop cider cinema circle citrus city clam clap clay clean clerk click cliff climb clock cloud clover clown club coach coast cobra cocoa coconut coffee coil coin comet compass cone coral corn cosmos cotton couch cove cow coyote crab craft crane crater cream creek crest crew cricket crisp crowd crown crumb crystal cube cup curl curve cycle daisy dance dandy dart dawn deal deck deer delta denim desert desk detail dial diamond diary diesel dinner dingo dish diver dock doctor dog dolphin dome donkey door dove dozen dragon drama dream dress drift drill drink drum duck dune dusk eagle earth easel echo edge eight elbow elder elf elm ember emerald empire engine envoy epoch equal erase essay evening exact exit extra fabric face fairy falcon family fan farm fast feast feather fence fern ferry fever fiber field fig film finch fire first fish flag flame flash fleet flint float flock flood floor flour flower flute fly foam focus fog foil folk forest forge fork fort fossil fox frame fresh friend frog frost fruit fudge funny gadget galaxy game garden garlic gas gate gear gem ghost giant ginger giraffe glacier glad glass glide globe glove glow glue goat gold golf goose gown grace grain grape graph grass gravel green grid grill grove guard guest guide guitar gull gym habit hair half hall hammer hamster hand harbor hare harp harvest hat hawk hazel heart heat hedge helmet herb heron hill hint hippo hive hobby holly home honey hood hook hope horn horse hotel house hover humble hunt hut ice icon igloo image inch index ink inn insect iron island ivory ivy jacket jade jaguar jam jar jazz jelly jet jewel jigsaw joke journey joy judge juice jungle junior kayak keel kettle key kick kind king kiosk kite kitten kiwi knee knife knit knob koala label ladder lagoon lake lamp lance land lantern lark laser latch laugh lava lawn layer leaf leap lemon lens leopard letter level lever light lily lime linen lion list llama lobby lobster lock lodge logic lotus lucky lunar lunch lynx magic magnet mango maple marble march market mask match meadow medal melon memo mesa metal meteor mild mill mimic mint mirror mist mitten moat model mole monkey moon moose moss moth motor mount mouse movie mud mule muse music myth nacho nail name napkin navy nectar nest net night noble noodle north nose notch note novel nugget nut oak oasis oat ocean olive onion opal opera orange orbit orchid otter oval oven owl oxygen oyster paddle page paint palace palm panda panel paper parade parrot party pasta patch path pause peach peak pear pearl pebble pedal pelican pencil penguin pepper piano pickle picnic piece pigeon pilot pine pink pipe pixel pizza planet plant plaza plum pocket poem polar pond pony pool poppy porch potato pouch powder prairie prism puddle puffin pulse puma pumpkin puppy puzzle quail quartz queen quest quick quill quilt quiet quote rabbit raccoon radar radio raft rain raisin ranch raven razor reach record reef relay ribbon rice ridge ring river roast robin robot rocket rodeo roof rook room root rope rose round ruby rugby rule saddle safari sage sail salad salmon salt sand sandal satin sauce scale scarf school scout screen seal season seed shadow shark sheep shelf shell shield shine ship shore signal silk silver sketch skate skill sky slate sled sleep slice slope smile smoke snail snake snow soap sock solar song sound soup south space spark spice spider spike spoon sport spring spruce square squid stable stamp star station steam steel stem step stone storm story stove straw stream street studio sugar summer sun surf swan swift swing sword table talon tango tape taxi teacup temple tennis tent thistle thorn thread thumb thunder ticket tide tiger tile timber tin toast tomato tonic tool torch tower toy track trade trail train tree tribe trout truck trumpet tulip tunnel turkey turtle twig twin umbrella union urban valley vapor vase velvet venture vest video village vine violin visit vivid voice volcano vowel voyage wagon walnut walrus wand warm water wave wax weasel web wedge west whale wheat wheel whisk whistle willow wind window wing winter wire wish wizard wolf wonder wood wool world worm wrap yacht yard yarn yellow yoga yogurt zebra zero zigzag zinc zone zoom".split(" ");
 
@@ -885,8 +884,8 @@ function suggestPassphrase(count) {
   return out.join("-");
 }
 // A rough guide only. Returns {bits, label, fraction}.
-function passkeyStrength(pw) {
-  if (!pw) return {bits: 0, label: "Passkey strength", fraction: 0};
+function secret passwordStrength(pw) {
+  if (!pw) return {bits: 0, label: "Secret password strength", fraction: 0};
   let bits;
   const parts = pw.split("-");
   if (parts.length >= 3 && parts.every(w => WORDS.includes(w))) {
@@ -1054,6 +1053,8 @@ function planArt(fp, size) {
 }
 
 (function(){const sp="Please summarize everything important from our conversation so far into concise, one-line bullet points (facts, decisions, preferences, and next steps) so I can paste them into my Kaleidoscope Glyph memory saver.";async function cp(el){try{await navigator.clipboard.writeText(sp);}catch(e){const ta=document.createElement("textarea");ta.value=sp;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}if(el)el.textContent="Copied AI summary instructions! Paste into ChatGPT, Claude, or Gemini, then paste its summary back here.";const st=document.getElementById("status");if(st){st.hidden=false;st.textContent="Copied AI summary instructions! Paste into your AI chat, then paste its reply back above.";}}const wb=document.getElementById("wrapUpBtn");if(wb)wb.addEventListener("click",()=>cp(document.getElementById("consoleHint")));const sc=document.getElementById("stepCopyBtn");if(sc)sc.addEventListener("click",()=>{const cb=document.getElementById("copyBtn"),ws=document.getElementById("workspace");if(ws&&!ws.hidden&&cb)cb.click();else cp(document.getElementById("consoleHint"));});const so=document.getElementById("saveOpenBtn"),wo=document.getElementById("workspace");function sy(){if(so&&wo)so.classList.toggle("muted-save",wo.hidden);}if(wo){new MutationObserver(sy).observe(wo,{attributes:true,attributeFilter:["hidden"]});sy();}})();
+
+(function(){const sp='Please summarize everything important from our conversation so far into concise, one-line bullet points (facts, decisions, preferences, and next steps) so I can paste them into my Kaleidoscope Glyph memory saver.';async function cp(el){try{await navigator.clipboard.writeText(sp);}catch(e){const ta=document.createElement('textarea');ta.value=sp;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}if(el)el.textContent='Copied AI summary instructions! Paste into ChatGPT, Claude, or Gemini, then paste its summary back here.';const st=document.getElementById('status');if(st){st.hidden=false;st.textContent='Copied AI summary instructions! Paste into your AI chat, then paste its reply back above.';}}const wb=document.getElementById('wrapUpBtn');if(wb)wb.addEventListener('click',()=>cp(document.getElementById('consoleHint')));const sc=document.getElementById('stepCopyBtn');if(sc)sc.addEventListener('click',()=>{const cb=document.getElementById('copyBtn'),ws=document.getElementById('workspace');if(ws&&!ws.hidden&&cb)cb.click();else cp(document.getElementById('consoleHint'));});const so=document.getElementById('saveOpenBtn'),wo=document.getElementById('workspace');function sy(){if(so&&wo)so.classList.toggle('muted-save',wo.hidden);}if(wo){new MutationObserver(sy).observe(wo,{attributes:true,attributeFilter:['hidden']});sy();}})();
 </script>
 
 <script id="ui">
@@ -1381,8 +1382,8 @@ function planArt(fp, size) {
     $("#fnamePreview").textContent = "File name: KVMS_" + t.date + "_" + t.hh + t.mm + "_XXXXXXXX.png";
   }
   function updateStrength() {
-    const r = passkeyStrength($("#savePw").value);
-    $("#strengthText").textContent = r.bits ? "Passkey strength: " + r.label : "Passkey strength";
+    const r = secret passwordStrength($("#savePw").value);
+    $("#strengthText").textContent = r.bits ? "Secret password strength: " + r.label : "Secret password strength";
     const bar = $("#strengthBar");
     bar.style.width = Math.round(100 * r.fraction) + "%";
     bar.style.background = r.label === "Weak" ? "var(--bad)" : r.label === "Fair" ? "var(--warn)" : "var(--good)";
@@ -1561,7 +1562,7 @@ function planArt(fp, size) {
     return canvas;
   }
 
-  /* Two extra styles, drawn only from the fingerprint (never from your text or passkey).
+  /* Two extra styles, drawn only from the fingerprint (never from your text or secret password).
      Golden Angle and Golden Ratio: GA = pi * (3 - sqrt 5), PHI = 1.6180339887. */
   const PHI = 1.6180339887, GA = Math.PI * (3 - Math.sqrt(5));
   function renderStyleArt(style, fp, size) {
@@ -1683,8 +1684,8 @@ function planArt(fp, size) {
     state.title = $("#saveTitle").value;
     state.artStyle = cleanArtStyle($("#glyphArtStyle").value);
     const pw = quick ? sessionPass : $("#savePw").value;
-    if (!pw) return setMsg("#saveMsg", "The passkey cannot be empty.", "err");
-    if (!quick && pw !== $("#savePw2").value) return setMsg("#saveMsg", "The two passkeys did not match.", "err");
+    if (!pw) return setMsg("#saveMsg", "The secret password cannot be empty.", "err");
+    if (!quick && pw !== $("#savePw2").value) return setMsg("#saveMsg", "The two secret passwords did not match.", "err");
     let session;
     try { session = buildSession(state.nodes, state.labels, state.title, state.artStyle); }
     catch (e) { return setMsg("#saveMsg", e.message, "err"); }
@@ -1721,7 +1722,7 @@ function planArt(fp, size) {
       link.click();
       markSaved();
       if (quick || $("#keepPass").checked) rememberPass(pw);
-      setStatus("Saved " + session.nodes.length + " notes as " + name + ". Keep a backup copy, and remember your passkey.", "ok");
+      setStatus("Saved " + session.nodes.length + " notes as " + name + ". Keep a backup copy, and remember your secret password.", "ok");
       $("#saveForm").hidden = true;
       $("#saveResult").hidden = false;
       $("#savePw").value = ""; $("#savePw2").value = ""; updateStrength();
@@ -1775,7 +1776,7 @@ function planArt(fp, size) {
     const pasted = $("#pasteIn").value.trim();
     if (!openFile && !pasted) return setMsg("#openMsg", "Choose a glyph PNG first, or paste the locked text.", "err");
     const pw = $("#openPw").value;
-    if (!pw) return setMsg("#openMsg", "Type the passkey.", "err");
+    if (!pw) return setMsg("#openMsg", "Type the secret password.", "err");
 
     busy("open", true);
     openCancel = {cancelled: false};
@@ -1811,7 +1812,7 @@ function planArt(fp, size) {
     }
   }
 
-  /* Clear Session: forget everything on this page (notes, labels, title, passkeys, previews). */
+  /* Clear Session: forget everything on this page (notes, labels, title, secret passwords, previews). */
   function clearSession() {
     if (saveCancel) saveCancel.cancelled = true;
     if (openCancel) openCancel.cancelled = true;
@@ -1854,12 +1855,12 @@ function planArt(fp, size) {
     $("#saveX").addEventListener("click", () => $("#saveDlg").close());
     $("#saveDone").addEventListener("click", () => $("#saveDlg").close());
     $("#loadX").addEventListener("click", () => $("#loadDlg").close());
-    // closing a window stops any lock or unlock still running in it, and empties its passkey boxes
+    // closing a window stops any lock or unlock still running in it, and empties its secret password boxes
     $("#saveDlg").addEventListener("close", () => { if (saveCancel) saveCancel.cancelled = true; for (const id of ["#savePw", "#savePw2"]) $(id).value = ""; });
     $("#loadDlg").addEventListener("close", () => { if (openCancel) openCancel.cancelled = true; $("#openPw").value = ""; $("#pasteIn").value = ""; });
     $("#clearSessionBtn").addEventListener("click", () => {
       if (hasContent() && snapshot() !== savedSnapshot &&
-          !confirm("Clear this session? Notes, labels, title, passkeys and previews are removed from this page. Saved glyph files are not touched.")) return;
+          !confirm("Clear this session? Notes, labels, title, secret passwords and previews are removed from this page. Saved glyph files are not touched.")) return;
       clearSession();
     });
     $("#saveTitle").addEventListener("input", e => { state.title = e.target.value; scheduleCapacity(); });
